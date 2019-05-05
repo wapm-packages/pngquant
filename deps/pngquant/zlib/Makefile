@@ -16,7 +16,7 @@
 # To install in $HOME instead of /usr/local, use:
 #    make install prefix=$HOME
 
-CC=/home/emsdk_portable/emscripten/master/emcc
+CC=/Users/syrusakbary/Development/emsdk/emscripten/1.38.28/emcc
 
 CFLAGS= -m64 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN
 #CFLAGS=-O -DMAX_WBITS=14 -DMAX_MEM_LEVEL=7
@@ -27,18 +27,18 @@ CFLAGS= -m64 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN
 SFLAGS= -fPIC -m64 -D_LARGEFILE64_SOURCE=1 -DHAVE_HIDDEN
 LDFLAGS=
 TEST_LDFLAGS=-L. libz.a
-LDSHARED=/home/emsdk_portable/emscripten/master/emcc
-CPP=/home/emsdk_portable/emscripten/master/emcc -E
+LDSHARED=/Users/syrusakbary/Development/emsdk/emscripten/1.38.28/emcc
+CPP=/Users/syrusakbary/Development/emsdk/emscripten/1.38.28/emcc -E
 
 STATICLIB=libz.a
-SHAREDLIB=libz.so
-SHAREDLIBV=libz.so.1.2.11
-SHAREDLIBM=libz.so.1
+SHAREDLIB=libz.dylib
+SHAREDLIBV=libz.1.2.11.dylib
+SHAREDLIBM=libz.1.dylib
 LIBS=$(STATICLIB) $(SHAREDLIBV)
 
-AR=/home/emsdk_portable/emscripten/master/emar
+AR=llvm-ar
 ARFLAGS=rc
-RANLIB=/home/emsdk_portable/emscripten/master/emranlib
+RANLIB=/Users/syrusakbary/Development/emsdk/emscripten/1.38.28/emranlib
 LDCONFIG=ldconfig
 LDSHAREDLIBC=-lc
 TAR=tar
