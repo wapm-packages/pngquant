@@ -1,15 +1,91 @@
-# Pngquant.js
-Pngquant.js is a port of [pngquant](https://github.com/pornel/pngquant) lib in js, made possible by [emscripten](https://github.com/kripken/emscripten) which compiles LLVM bit code generated from c/c++ directly to javascript. Pngquant js can compress png images right in your browser without any server requirements. This can open a wide array of possibilities of what can be achieved on a browser, with clients compressing the static assets on their device itself, saving precious bandwidth.
+# Pngquant
 
-### Build
-This version of pngquantjs is built using v2.8.0 of [pngquant](https://github.com/pornel/pngquant). Original [configure script](pngquant/configure) needs to be patched in order to be used by emscripten. Patched version of this file is present in the deps folder in this directory. Additionally, patch file for configure script is also present in the repository in order to create a fresh copy. Build script assumes that emscripten is already built and available in the system path. Once this is ensured, just run `./build.sh` which will initiate build process and pngquant.js will be available in dist folder.
-This file can be easily compressed using uglify.js. I haven't included the command to use uglify.js in the build script (planning to do so soon), but a minified version of pngquant.js is included in the demo folder.
-Since the process of setting up emscripten is tedious and may pollute the global namespace, I have created a docker image which comes preinstalled with emscripten and all environments initialized. It's available at [this](https://hub.docker.com/r/psych0der/emscripten/) link and can be used by issuing `
-docker pull psych0der/emscripten` command. I would recommend using docker image since it greatly simplifies working with emscripten without thinking about any installation issue.
+pngquant is a command-line utility and [a library](https://pngquant.org/lib) for lossy compression of PNG images.
 
-### Demo
-[https://psych0der.github.io/pngquantjs/](https://psych0der.github.io/pngquantjs/)
+The conversion reduces file sizes significantly (often as much as 70%) and preserves full alpha transparency. Generated images are compatible with all web browsers and operating systems.
+
+You can install it with:
+
+```shell
+wapm install -g pngquant
+```
+
+[This](https://github.com/kornelski/pngquant) is the official `pngquant` repository. The compression engine is also available [as an embeddable library](https://github.com/ImageOptim/libimagequant).
+
+## Usage
+
+- batch conversion of multiple files: `pngquant *.png`
+- Unix-style stdin/stdout chaining: `… | pngquant - | …`
+
+## Features
+
+- High-quality palette generation
+
+* advanced quantization algorithm with support for gamma correction and premultiplied alpha
+* unique dithering algorithm that does not add unnecessary noise to the image
+
+- Configurable quality level
+
+* automatically finds required number of colors and can skip images which can't be converted with the desired quality
+
+- Fast, modern code
+
+* based on a portable [libimagequant library](https://github.com/ImageOptim/libimagequant)
+* C99 with no workarounds for legacy systems or compilers ([apart from Visual Studio](https://github.com/kornelski/pngquant/tree/msvc))
+* multicore support (via OpenMP) and Intel SSE optimizations
+
+## Options
+
+See `pngquant -h` for full list.
+
+### `--quality min-max`
+
+`min` and `max` are numbers in range 0 (worst) to 100 (perfect), similar to JPEG. pngquant will use the least amount of colors required to meet or exceed the `max` quality. If conversion results in quality below the `min` quality the image won't be saved (if outputting to stdin, 24-bit original will be output) and pngquant will exit with status code 99.
+
+    pngquant --quality=65-80 image.png
+
+### `--ext new.png`
+
+Set custom extension (suffix) for output filename. By default `-or8.png` or `-fs8.png` is used. If you use `--ext=.png --force` options pngquant will overwrite input files in place (use with caution).
+
+### `-o out.png` or `--output out.png`
+
+Writes converted file to the given path. When this option is used only single input file is allowed.
+
+### `--skip-if-larger`
+
+Don't write converted files if the conversion isn't worth it.
+
+### `--speed N`
+
+Speed/quality trade-off from 1 (slowest, highest quality, smallest files) to 11 (fastest, less consistent quality, light comperssion). The default is 4. It's recommended to keep the default, unless you need to generate images in real time (e.g. map tiles). Higher speeds are fine with 256 colors, but don't handle lower number of colors well.
+
+### `--nofs`
+
+Disables Floyd-Steinberg dithering.
+
+### `--floyd=0.5`
+
+Controls level of dithering (0 = none, 1 = full). Note that the `=` character is required.
+
+### `--posterize bits`
+
+Reduce precision of the palette by number of bits. Use when the image will be displayed on low-depth screens (e.g. 16-bit displays or compressed textures in ARGB444 format).
+
+### `--strip`
+
+Don't copy optional PNG chunks. Metadata is always removed on Mac (when using Cocoa reader).
+
+See [man page](https://github.com/kornelski/pngquant/blob/master/pngquant.1) (`man pngquant`) for the full list of options.
+
+## Build
+
+This version of pngquant is built using v2.8.0 of [pngquant](https://github.com/pornel/pngquant). Original [configure script](pngquant/configure) needs to be patched in order to be used by emscripten. Patched version of this file is present in the deps folder in this directory. Additionally, patch file for configure script is also present in the repository in order to create a fresh copy. Build script assumes that emscripten is already built and available in the system path. Once this is ensured, just run `./build.sh` which will initiate build process and pngquant. will be available in dist folder.
 
 ## License
 
-* Under **GPL v3** with an additional [copyright notice](https://github.com/kornelski/pngquant/blob/master/COPYRIGHT)
+pngquant is dual-licensed:
+
+- Under **GPL v3** or later with an additional [copyright notice](https://github.com/kornelski/pngquant/blob/master/COPYRIGHT) that must be kept for the older parts of the code.
+
+- Or [a **commercial license**](https://supso.org/projects/pngquant) for use in non-GPL software (e.g. closed-source or App Store distribution). You can [get the license via Super Source](https://supso.org/projects/pngquant). Email kornel@pngquant.org if you have any questions.

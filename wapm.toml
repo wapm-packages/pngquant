@@ -1,0 +1,15 @@
+[package]
+name = "pngquant"
+version = "0.1.0"
+description = "Lossy PNG compressor"
+readme = "README.md"
+repository = "https://github.com/wapm-packages/pngquant"
+
+[[module]]
+name = "pngquant"
+source = "pngquant.wasm"
+abi = "emscripten"
+
+[[command]]
+name = "pngquant"
+module = "pngquant"
